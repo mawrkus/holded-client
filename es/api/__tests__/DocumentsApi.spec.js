@@ -207,12 +207,13 @@ describe('DocumentsApi', () => {
 
     it('should return the response from the API', async () => {
       const { httpClient, api } = createApi();
+      const apiResponse = { status: 1, info: 'Deleted ok', id: '88' };
 
-      httpClient.request.mockResolvedValue({ data: { id: 88 } });
+      httpClient.request.mockResolvedValue({ data: apiResponse });
 
       const result = await api.delete({ type: api.types.SALESRECEIPT, id: 88 });
 
-      expect(result).toEqual({ id: 88 });
+      expect(result).toEqual(apiResponse);
     });
 
     describe('when there is an error requesting the API', () => {
