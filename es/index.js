@@ -1,5 +1,5 @@
-const axios = require('axios');
 const debug = require('debug')('holded:client');
+const HttpClient = require('./HttpClient');
 const DocumentsApi = require('./api/DocumentsApi');
 
 /**
@@ -13,14 +13,12 @@ module.exports = class HoldedClient {
   constructor({ apiKey }) {
     const invoiceApiUrl = 'https://api.holded.com/api/invoicing/v1';
 
-    this._httpClient = axios.create({
+    this._httpClient = new HttpClient({
       baseURL: invoiceApiUrl,
       headers: {
         key: apiKey,
       },
     });
-
-    debug('HTTP client created', this._httpClient.defaults);
 
     this.documents = new DocumentsApi({ httpClient: this._httpClient });
 
