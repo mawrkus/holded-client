@@ -1,7 +1,7 @@
 const debug = require('debug')('holded:client:contacts');
 
 /**
- * The Holded invoice documents API
+ * The Holded invoice contacts API
  * @see https://developers.holded.com/v1.0/reference#contacts
  */
 module.exports = class DocumentsApi {
