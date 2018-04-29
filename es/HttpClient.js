@@ -2,15 +2,15 @@ const axios = require('axios');
 const debug = require('debug')('holded:http');
 
 function logRequest(config) {
-  const { method, baseURL, url, params = '', headers } = config;
-  debug('%s%s %s...', method.toUpperCase(), baseURL, url, params);
+  const { method, baseURL, url, headers, data } = config;
+  debug('%s %s%s...', method.toUpperCase(), baseURL, url, data);
   debug(headers);
 }
 
 function logResponse(response) {
-  const { config, status, statusText } = response;
-  const { method, url, params = '' } = config;
-  debug('%s %s: %s (%d)', method.toUpperCase(), url, statusText, status, params);
+  const { config, status, statusText, data } = response;
+  const { method, url } = config;
+  debug('%s %s: %s (%d)', method.toUpperCase(), url, statusText, status, data);
 }
 
 module.exports = class HttpClient {
@@ -34,9 +34,7 @@ module.exports = class HttpClient {
       return response;
     }, async (error) => {
       const { response } = error;
-      const { config, status, statusText } = response;
-      const { method, url, params } = config;
-      debug('%s %s: %s (%d)', method.toUpperCase(), url, statusText, status, params);
+      logResponse(response);
       throw error;
     });
 

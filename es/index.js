@@ -17,6 +17,8 @@ module.exports = class HoldedClient {
       baseURL: invoiceApiUrl,
       headers: {
         key: apiKey,
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
       },
     });
 
