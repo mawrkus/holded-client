@@ -1,6 +1,7 @@
-const debug = require('debug')('holded:client');
+const debug = require('debug')('holded:client:core');
 const HttpClient = require('./HttpClient');
 const DocumentsApi = require('./api/DocumentsApi');
+const ContactsApi = require('./api/ContactsApi');
 
 /**
  * The client for the Holded invoice API v1.0
@@ -23,6 +24,7 @@ module.exports = class HoldedClient {
     });
 
     this.documents = new DocumentsApi({ httpClient: this._httpClient });
+    this.contacts = new ContactsApi({ httpClient: this._httpClient });
 
     debug('Holded API client created');
   }
