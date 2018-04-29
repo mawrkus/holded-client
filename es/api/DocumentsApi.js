@@ -33,21 +33,78 @@ module.exports = class DocumentsApi {
   /* eslint-enable class-methods-use-this */
 
   /**
-   * @param  {type} type The type of document to retrieve
+   * @param  {string} type The type of documents to retrieve
    * @throws
    * @return {Promise}
    */
-  async listByType({ type }) {
+  async list({ type }) {
+    this._checkForValidType(type);
+
+    const { data: invoicesList } = await this._httpClient.request({
+      method: 'get',
+      url: `/documents/${type}`,
+    });
+
+    return invoicesList;
+  }
+
+  /**
+   * @param  {string} type The type of document to create
+   * @return {Promise}
+   */
+  async create({ type, document }) {
+    this._checkForValidType(type);
+
+    const { data: newDocument } = await this._httpClient.request({
+      method: 'post',
+      url: `/documents/${type}`,
+      data: document,
+    });
+
+    return newDocument;
+  }
+
+  /**
+   * @param  {string} type The type of document to delete
+   * @param  {string} id
+   * @return {Promise}
+   */
+  async delete({ type, id }) {
+    this._checkForValidType(type);
+
+    const { data: document } = await this._httpClient.request({
+      method: 'delete',
+      url: `/documents/${type}/${id}`,
+    });
+
+    return document;
+  }
+
+  /**
+   * @param  {string} type The type of document to download
+   * @param  {string} id
+   * @return {Promise}
+   */
+  async downloadPdf({ type, id }) {
+    this._checkForValidType(type);
+
+    const { data: base64Pdf } = await this._httpClient.request({
+      method: 'get',
+      url: `/documents/${type}/${id}/pdf`,
+    });
+
+    return base64Pdf;
+  }
+
+  /**
+   * @param  {string} type
+   * @throws
+   */
+  _checkForValidType(type) {
     const allowedTypes = Object.values(this.types);
 
     if (!allowedTypes.includes(type)) {
       throw new Error(`Unknown document type "${type}"! Please provide one of the following type: ${allowedTypes.join(', ')}.`);
     }
-
-    const { data: invoicesList } = await this._httpClient.request({
-      url: `/documents/${type}`,
-    });
-
-    return invoicesList;
   }
 };

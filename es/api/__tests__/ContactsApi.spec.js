@@ -77,7 +77,7 @@ describe('ContactsApi', () => {
       });
     });
 
-    it('should return the data fetched from the API', async () => {
+    it('should return the response from the API', async () => {
       const { httpClient, api } = createApi();
 
       httpClient.request.mockResolvedValue({ data: { id: 123 } });
