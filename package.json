@@ -22,6 +22,7 @@
     "test": "jest",
     "tdd": "jest es/ --watch --verbose",
     "dev:demo": "DEBUG=holded:* babel-watch es/demo",
+    "demo": "DEBUG=holded:* babel-node es/demo",
     "prebuild": "npm run test",
     "build": "rm -rf lib && babel es -d lib --source-maps",
     "prerelease": "npm run build",

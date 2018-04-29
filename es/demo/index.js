@@ -10,7 +10,11 @@ const client = new HoldedClient({ apiKey });
 const { types } = client.documents;
 
 (async () => {
-  debug('Fetching invoices...');
-  const invoicesList = await client.documents.listByType({ type: types.INVOICE });
-  debug(invoicesList);
+  try {
+    debug('Fetching invoices...');
+    const invoicesList = await client.documents.listByType({ type: types.INVOICE });
+    debug(invoicesList);
+  } catch (demoError) {
+    debug(demoError);
+  }
 })();
