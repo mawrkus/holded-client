@@ -14,6 +14,7 @@ const { types: docTypes } = client.documents;
 async function createInvoice() {
   debug('Creating new invoice...');
   const document = {
+    salesChannelId: '5ae61a9b2e1d933c6806be13',
     contactCode: 42,
     contactName: 'Antoine',
     desc: 'Space reservations',
@@ -34,7 +35,7 @@ async function createInvoice() {
 }
 
 async function listInvoices() {
-  debug('Fetching invoices...');
+  debug('Fetching invoices list...');
   const invoicesList = await client.documents.list({ type: docTypes.INVOICE });
   debug(invoicesList);
 }
@@ -60,41 +61,45 @@ async function deleteInvoice(id) {
   debug(invoice);
 }
 
-async function createContact() {
-  debug('Creating new contact...');
-  const contact = {
-    code: 78,
-    name: 'Mariano',
-  };
-  const newContact = await client.contacts.create({ contact });
+async function createItem({ what, params }) {
+  debug('Creating new %s...', what);
+  const newContact = await client[what].create(params);
   debug(newContact);
 }
 
-async function listContacts() {
-  debug('Fetching contacts...');
-  const contactsList = await client.contacts.list();
-  debug(contactsList);
+async function listItems({ what }) {
+  debug('Fetching %s list...', what);
+  const list = await client[what].list();
+  debug(list);
 }
 
-async function getContact(id) {
-  debug('Fetching contact "%s"...', id);
-  const contact = await client.contacts.get({ id });
-  debug(contact);
+async function getItem({ what, id }) {
+  debug('Fetching %s "%s"...', what, id);
+  const item = await client[what].get({ id });
+  debug(item);
 }
 
-async function deleteContact(id) {
-  debug('Deleting contact "%s"...', id);
-  const contact = await client.contacts.delete({ id });
-  debug(contact);
+async function deleteItem({ what, id }) {
+  debug('Deleting %s "%s"...', what, id);
+  const response = await client[what].delete({ id });
+  debug(response);
 }
 
 (async () => {
   try {
-    // await createContact();
-    // await listContacts();
-    // await getContact('abc');
-    // await deleteContact('abc');
-    // await listContacts();
+    // const params = { contact: { code: 78, name: 'Mariano' } };
+    // await createItem({ what: 'contacts', params });
+    // await listItems({ what: 'contacts' });
+    // await getItem({ what: 'contacts', id: 'abc' });
+    // await deleteItem({ what: 'contacts', id: 'abc' });
+    // await listItems({ what: 'contacts' });
+
+    // const params = { salesChannel: { name: 'Online', desc: 'Our worldwide online store' } };
+    // await createItem({ what: 'salesChannels', params });
+    // await listItems({ what: 'salesChannels' });
+    // await getItem({ what: 'salesChannels', id: 'xyz' });
+    // await deleteItem({ what: 'salesChannels', id: 'xyz' });
+    // await listItems({ what: 'salesChannels' });
 
     // await createInvoice();
     // await listInvoices();
