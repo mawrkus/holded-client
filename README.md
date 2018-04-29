@@ -1,6 +1,6 @@
-# Holded invoice API client
+# 💎 Holded invoice API client
 
-A client for the Holded invoice API v1.0, see https://developers.holded.com/
+A Node.js client for the Holded invoice API v1.0, see https://developers.holded.com/
 
 ## Installation
 
