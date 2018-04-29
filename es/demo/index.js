@@ -17,10 +17,9 @@ async function createInvoice() {
     salesChannelId: '5ae61a9b2e1d933c6806be13',
     contactCode: 42,
     contactName: 'Antoine',
-    desc: 'Space reservations',
-    date: Date.now(),
+    date: Date.now() / 1000, // PHP on the backend baby
     notes: 'Premium account',
-    language: 'es-ES',
+    language: 'en',
     items: [{
       name: '6h chillax coworking Gerona',
       desc: 'Meeting room reservation',
@@ -43,7 +42,7 @@ async function listInvoices() {
 async function downloadInvoice(id) {
   debug('Downloading invoice "%s"...', id);
   const { data: base64Pdf } = await client.documents.downloadPdf({ type: docTypes.INVOICE, id });
-  const pdfFile = './es/demo/invoice.pdf';
+  const pdfFile = './es/demo/out/invoice.pdf';
 
   try {
     fs.unlinkSync(pdfFile);
@@ -89,22 +88,22 @@ async function deleteItem({ what, id }) {
   try {
     // const params = { contact: { code: 78, name: 'Mariano' } };
     // await createItem({ what: 'contacts', params });
-    // await listItems({ what: 'contacts' });
+    await listItems({ what: 'contacts' });
     // await getItem({ what: 'contacts', id: 'abc' });
     // await deleteItem({ what: 'contacts', id: 'abc' });
     // await listItems({ what: 'contacts' });
 
     // const params = { salesChannel: { name: 'Online', desc: 'Our worldwide online store' } };
     // await createItem({ what: 'salesChannels', params });
-    // await listItems({ what: 'salesChannels' });
-    // await getItem({ what: 'salesChannels', id: 'xyz' });
-    // await deleteItem({ what: 'salesChannels', id: 'xyz' });
+    await listItems({ what: 'salesChannels' });
+    // await getItem({ what: 'salesChannels', id: 'cde' });
+    // await deleteItem({ what: 'salesChannels', id: 'cde' });
     // await listItems({ what: 'salesChannels' });
 
     // await createInvoice();
-    // await listInvoices();
-    // await downloadInvoice('xyz');
-    // await deleteInvoice('xyz');
+    await listInvoices();
+    // await downloadInvoice('efg');
+    // await deleteInvoice('efg');
     // await listInvoices();
   } catch (demoError) {
     debug(demoError);

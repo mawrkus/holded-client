@@ -1,4 +1,5 @@
 const debug = require('debug')('holded:client:core');
+const { version: pkgVersion } = require('../package.json');
 const HttpClient = require('./HttpClient');
 const {
   DocumentsApi,
@@ -15,6 +16,8 @@ module.exports = class HoldedClient {
    * @param {string} apiKey
    */
   constructor({ apiKey }) {
+    debug('💎  Holded API client v%s', pkgVersion);
+
     const invoiceApiUrl = 'https://api.holded.com/api/invoicing/v1';
 
     this._httpClient = new HttpClient({
