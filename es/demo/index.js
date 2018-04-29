@@ -1,3 +1,4 @@
+const fs = require('fs');
 const dotEnv = require('dotenv');
 const debug = require('debug')('holded:client:demo');
 const HoldedClient = require('..');
@@ -6,7 +7,9 @@ const env = dotEnv.config({ path: '.env-dev' });
 const { HOLDED_API_KEY: apiKey } = env.parsed;
 
 const client = new HoldedClient({ apiKey });
-const { types } = client.documents;
+const { types: docTypes } = client.documents;
+
+/* eslint no-unused-vars: warn */
 
 async function createInvoice() {
   debug('Creating new invoice...');
@@ -22,18 +25,39 @@ async function createInvoice() {
       desc: 'Meeting room reservation',
       units: 1,
       subtotal: 300,
-      tax: 63,
+      tax: 20, // %
       sku: 'co-gerona-bcn',
     }],
   };
-  const invoice = await client.documents.create({ type: types.INVOICE, document });
+  const invoice = await client.documents.create({ type: docTypes.INVOICE, document });
   debug(invoice);
 }
 
 async function listInvoices() {
   debug('Fetching invoices...');
-  const invoicesList = await client.documents.listByType({ type: types.INVOICE });
+  const invoicesList = await client.documents.list({ type: docTypes.INVOICE });
   debug(invoicesList);
+}
+
+async function downloadInvoice(id) {
+  debug('Downloading invoice "%s"...', id);
+  const { data: base64Pdf } = await client.documents.downloadPdf({ type: docTypes.INVOICE, id });
+  const pdfFile = './es/demo/invoice.pdf';
+
+  try {
+    fs.unlinkSync(pdfFile);
+  } catch (e) {
+    // nothing to do
+  }
+
+  fs.writeFileSync(pdfFile, base64Pdf, { encoding: 'base64' });
+  debug('Invoice PDF file saved to "%s".', pdfFile);
+}
+
+async function deleteInvoice(id) {
+  debug('Deleting invoice "%s"...', id);
+  const invoice = await client.documents.delete({ type: docTypes.INVOICE, id });
+  debug(invoice);
 }
 
 async function createContact() {
@@ -53,34 +77,30 @@ async function listContacts() {
 }
 
 async function getContact(id) {
-  debug('Fetching contact...');
+  debug('Fetching contact "%s"...', id);
   const contact = await client.contacts.get({ id });
   debug(contact);
 }
 
 async function deleteContact(id) {
-  debug('Deleting contact...');
+  debug('Deleting contact "%s"...', id);
   const contact = await client.contacts.delete({ id });
   debug(contact);
 }
 
-/*
-holded:demo { status: 1,
-holded:demo   id: '5ae5fa632e1d93715b633b64',
-holded:demo   invoiceNum: 'F180001',
-holded:demo   contactId: '5ae5fa632e1d93715b633b63' } +51ms
-*/
-
 (async () => {
   try {
-    // await createInvoice();
-    // await listInvoices();
-
     // await createContact();
     // await listContacts();
-    // await getContact('5ae5fa632e1d93715b633b63');
-    // await deleteContact('5ae5fa632e1d93715b633b63');
-    // await getContact('5ae5fa632e1d93715b633b63');
+    // await getContact('abc');
+    // await deleteContact('abc');
+    // await listContacts();
+
+    // await createInvoice();
+    // await listInvoices();
+    // await downloadInvoice('xyz');
+    // await deleteInvoice('xyz');
+    // await listInvoices();
   } catch (demoError) {
     debug(demoError);
   }
