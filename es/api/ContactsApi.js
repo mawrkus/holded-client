@@ -42,6 +42,7 @@ module.exports = class DocumentsApi {
   /**
    * Beware that if the contact has not been found, the API does return a 400 (Bad Request) with
    * the following data: { status: 0, info: 'not found' }
+   * @param {string} id
    * @return {Promise}
    */
   async get({ id }) {
@@ -57,6 +58,7 @@ module.exports = class DocumentsApi {
   /**
    * Beware that if the contact has not been found, the API does return a 400 (Bad Request) with
    * the following data: { status: 0, info: 'not found' }
+   * @param {string} id
    * @return {Promise}
    */
   async delete({ id }) {
