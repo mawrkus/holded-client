@@ -12,6 +12,8 @@ npm install holded-client
 
 ## Usage
 
+For example:
+
 ```js
 const HoldedClient = require('holded-client');
 
@@ -21,6 +23,35 @@ const { docTypes } = client.documents;
 
 const invoicesList = await client.documents.list({ type: docTypes.INVOICE });
 ```
+
+## API
+
+The client exposes the following Promise-based APIs:
+
+- `contacts`
+- `saleschannels`
+- `products`
+- `warehouses`
+- `treasury`
+- `expensesaccounts`
+- `payments`
+- `documents`
+
+Each api exposes the following methods:
+
+- `list()`
+- `create({ resource })`
+- `get({ id })`
+- `update({ id, resource })`
+- `delete({ id })`
+
+Except for the documents API:
+
+- `list({ type })`
+- `create({ type, document })`
+- `downloadPdf({ type, id })`
+- `update({ type, id, document })`
+- `delete({ type, id })`
 
 ## Testing
 
