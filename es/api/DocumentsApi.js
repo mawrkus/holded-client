@@ -86,19 +86,20 @@ module.exports = class DocumentsApi {
   }
 
   /**
-   * @param  {string} type The type of document to download
+   * @param  {string} type The type of document to delete
    * @param  {string} id
    * @return {Promise}
    */
-  async downloadPdf({ type, id }) {
-    debug('Downloading "%s" document id="%s" to PDF...', type, id);
+  async delete({ type, id }) {
+    debug('Deleting "%s" document id="%s"...', type, id);
 
-    const { data: base64Pdf } = await this._httpClient.request({
-      method: 'get',
-      url: `/documents/${type}/${id}/pdf`,
+    const { data } = await this._httpClient.request({
+      method: 'delete',
+      url: `/documents/${type}/${id}`,
     });
 
-    return base64Pdf;
+    debug(data);
+    return data;
   }
 
   /**
@@ -121,20 +122,19 @@ module.exports = class DocumentsApi {
   }
 
   /**
-   * @param  {string} type The type of document to delete
+   * @param  {string} type The type of document to download
    * @param  {string} id
    * @return {Promise}
    */
-  async delete({ type, id }) {
-    debug('Deleting "%s" document id="%s"...', type, id);
+  async downloadPdf({ type, id }) {
+    debug('Downloading "%s" document id="%s" to PDF...', type, id);
 
-    const { data } = await this._httpClient.request({
-      method: 'delete',
-      url: `/documents/${type}/${id}`,
+    const { data: base64Pdf } = await this._httpClient.request({
+      method: 'get',
+      url: `/documents/${type}/${id}/pdf`,
     });
 
-    debug(data);
-    return data;
+    return base64Pdf;
   }
 
   /**
