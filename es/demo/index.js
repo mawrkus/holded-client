@@ -11,38 +11,21 @@ const { types: docTypes } = client.documents;
 
 /* eslint no-unused-vars: warn */
 
-async function createInvoice() {
-  debug('Creating new invoice...');
-  const document = {
-    salesChannelId: '5ae61a9b2e1d933c6806be13',
-    contactCode: 42,
-    contactName: 'Antoine',
-    date: Date.now() / 1000, // PHP on the backend baby
-    notes: 'Premium account',
-    language: 'en',
-    items: [{
-      name: '6h chillax coworking Gerona',
-      desc: 'Meeting room reservation',
-      units: 1,
-      subtotal: 300,
-      tax: 20, // %
-      sku: 'co-gerona-bcn',
-    }],
-  };
-  const invoice = await client.documents.create({ type: docTypes.INVOICE, document });
-  debug(invoice);
+function listDocuments({ type }) {
+  return client.documents.list({ type });
 }
 
-async function listInvoices() {
-  debug('Fetching invoices list...');
-  const invoicesList = await client.documents.list({ type: docTypes.INVOICE });
-  debug(invoicesList);
+function createDocument({ type, document }) {
+  return client.documents.create({ type, document });
 }
 
-async function downloadInvoice(id) {
-  debug('Downloading invoice "%s"...', id);
-  const { data: base64Pdf } = await client.documents.downloadPdf({ type: docTypes.INVOICE, id });
-  const pdfFile = './es/demo/out/invoice.pdf';
+function updateDocument({ type, id, document }) {
+  return client.documents.update({ type, id, document });
+}
+
+async function downloadDocument({ type, id, file }) {
+  const { data: base64Pdf } = await client.documents.downloadPdf({ type, id });
+  const pdfFile = `./es/demo/out/${type}-${file}`;
 
   try {
     fs.unlinkSync(pdfFile);
@@ -51,75 +34,116 @@ async function downloadInvoice(id) {
   }
 
   fs.writeFileSync(pdfFile, base64Pdf, { encoding: 'base64' });
-  debug('Invoice PDF file saved to "%s".', pdfFile);
+  debug('PDF invoice file saved to "%s".', pdfFile);
+  return pdfFile;
 }
 
-async function deleteInvoice(id) {
-  debug('Deleting invoice "%s"...', id);
-  const invoice = await client.documents.delete({ type: docTypes.INVOICE, id });
-  debug(invoice);
+function deleteDocument({ type, id }) {
+  return client.documents.delete({ type, id });
 }
 
-async function createResource({ resourceName, resource }) {
-  debug('Creating new %s...', resourceName);
-  const newResource = await client[resourceName].create({ resource });
-  debug(newResource);
+function listResources({ resourceName }) {
+  return client[resourceName].list();
 }
 
-async function listResources({ resourceName }) {
-  debug('Fetching %s list...', resourceName);
-  const resourcesList = await client[resourceName].list();
-  debug(resourcesList);
+function createResource({ resourceName, resource }) {
+  return client[resourceName].create({ resource });
 }
 
-async function getResource({ resourceName, id }) {
-  debug('Fetching %s "%s"...', resourceName, id);
-  const resource = await client[resourceName].get({ id });
-  debug(resource);
+function getResource({ resourceName, id }) {
+  return client[resourceName].get({ id });
 }
 
-async function deleteResource({ resourceName, id }) {
-  debug('Deleting %s "%s"...', resourceName, id);
-  const response = await client[resourceName].delete({ id });
-  debug(response);
+function updateResource({ resourceName, id, resource }) {
+  return client[resourceName].update({ id, resource });
 }
 
-async function updateResource({ resourceName, resource }) {
-  debug('Updating %s "%s"...', resourceName, resource.id);
-  const response = await client[resourceName].update({ resource });
-  debug(response);
+function deleteResource({ resourceName, id }) {
+  return client[resourceName].delete({ id });
 }
 
 (async () => {
+  const resources = [{
+    name: 'contacts',
+    data: { name: 'Mariano R.', code: '78' },
+  }, {
+    name: 'saleschannels',
+    data: { name: 'Main store', desc: 'Barcelona store in Pg de G' },
+  }, {
+    name: 'products',
+    data: { name: 'Radiometer' },
+  }, {
+    name: 'warehouses',
+    data: { name: 'Main warehouse' },
+  }, {
+    name: 'treasury',
+    data: {},
+  }, {
+    name: 'expensesaccounts',
+    data: { name: 'Main account', desc: '*****' },
+  }, {
+    name: 'payments',
+    data: { amount: 99, desc: 'For good services' },
+  }];
+
+  resources.filter(({ name }) => name === 'payments').forEach(async ({ name: resourceName, data: resource }) => {
+    try {
+      const { id } = await createResource({ resourceName, resource });
+      await listResources({ resourceName });
+      await getResource({ resourceName, id });
+
+      const shouldUpdate = Boolean(resource.name);
+      if (shouldUpdate) {
+        const updatedResource = { ...resource, id, name: `${resource.name} -> updated` };
+        await updateResource({ resourceName, id, resource: updatedResource });
+        await getResource({ resourceName, id });
+      } else {
+        debug('Skipping update.');
+      }
+
+      await getResource({ resourceName, id });
+      await deleteResource({ resourceName, id });
+      await listResources({ resourceName });
+    } catch (demoError) {
+      debug(demoError);
+      if (demoError.response) {
+        debug(demoError.response.data);
+      }
+    }
+  });
+
   try {
-    /* const resource = { code: 78, name: 'Mariano' };
-    await createResource({ resourceName: 'contacts', resource });
-    await listResources({ resourceName: 'contacts' }); */
-    /* await getResource({ resourceName: 'contacts', id: 'xxx' });
-    const resource = { id: 'xxx', name: 'Mariano R.', email: 'm@r.org' };
-    await updateResource({ resourceName: 'contacts', resource });
-    await getResource({ resourceName: 'contacts', id: 'xxx' }); */
-    /* await getResource({ resourceName: 'contacts', id: 'xxx' });
-    await deleteResource({ resourceName: 'contacts', id: 'xxx' });
-    await listResources({ resourceName: 'contacts' }); */
+    const type = docTypes.SALESRECEIPT;
+    const document = {
+      salesChannelId: '5ae61a9b2e1d933c6806be13',
+      contactCode: 42,
+      contactName: 'Antoine',
+      date: Date.now() / 1000, // PHP on the backend baby
+      notes: 'Services provided to Antoine',
+      language: 'en',
+      products: [{
+        name: '6h chillax coworking Gerona',
+        desc: 'Meeting room reservation',
+        units: 1,
+        subtotal: 300,
+        tax: 20, // %
+        sku: 'co-gerona-bcn',
+      }],
+    };
 
-    /* const resource = { name: 'The stash', desc: '***' };
-    await createResource({ resourceName: 'saleschannels', resource });
-    await listResources({ resourceName: 'saleschannels' }); */
-    /* await getResource({ resourceName: 'saleschannels', id: 'yyy' });
-    const resource = { id: 'yyy', name: 'Main stash' };
-    await updateResource({ resourceName: 'saleschannels', resource });
-    await getResource({ resourceName: 'saleschannels', id: 'yyy' }); */
-    /* await getResource({ resourceName: 'saleschannels', id: 'yyy' });
-    await deleteResource({ resourceName: 'saleschannels', id: 'yyy' });
-    await listResources({ resourceName: 'saleschannels' }); */
+    const { id } = await createDocument({ type, document });
+    await listDocuments({ type });
+    await downloadDocument({ type, id, file: 'antoine.pdf' });
 
-    // await createInvoice();
-    // await listInvoices();
-    // await downloadInvoice('efg');
-    // await deleteInvoice('efg');
-    // await listInvoices();
+    await updateDocument({ type, id, document: { langauge: 'fr', notes: 'Updated services' } });
+    await downloadDocument({ type, id, file: 'antoine-updated.pdf' });
+
+    await deleteDocument({ type, id });
+    await listDocuments({ type });
   } catch (demoError) {
     debug(demoError);
+    if (demoError.response) {
+      debug(demoError.response.data);
+    }
   }
 })();
