@@ -9,11 +9,22 @@ module.exports = class DocumentsApi {
    * @param {HttpClient} An HTTP client for the Holded API
    */
   constructor({ httpClient }) {
+    this._resourceName = 'documents';
     this._httpClient = httpClient;
-    debug('Holded documents API created', this.types);
+    debug('Holded "documents" API created', this.types);
+  }
+
+  /**
+   * @return {string}
+   */
+  get resourceName() {
+    return this._resourceName;
   }
 
   /* eslint-disable class-methods-use-this */
+  /**
+   * @return {Object} All the available document types
+   */
   get types() {
     return {
       CREDITNOTE: 'creditnote',
@@ -27,6 +38,10 @@ module.exports = class DocumentsApi {
     };
   }
 
+  /**
+   * @param  {Object} value
+   * @throws
+   */
   set types(value) {
     throw new Error('Modifying document types is not permitted!');
   }

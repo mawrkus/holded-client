@@ -60,48 +60,62 @@ async function deleteInvoice(id) {
   debug(invoice);
 }
 
-async function createItem({ what, params }) {
-  debug('Creating new %s...', what);
-  const newContact = await client[what].create(params);
-  debug(newContact);
+async function createResource({ resourceName, resource }) {
+  debug('Creating new %s...', resourceName);
+  const newResource = await client[resourceName].create({ resource });
+  debug(newResource);
 }
 
-async function listItems({ what }) {
-  debug('Fetching %s list...', what);
-  const list = await client[what].list();
-  debug(list);
+async function listResources({ resourceName }) {
+  debug('Fetching %s list...', resourceName);
+  const resourcesList = await client[resourceName].list();
+  debug(resourcesList);
 }
 
-async function getItem({ what, id }) {
-  debug('Fetching %s "%s"...', what, id);
-  const item = await client[what].get({ id });
-  debug(item);
+async function getResource({ resourceName, id }) {
+  debug('Fetching %s "%s"...', resourceName, id);
+  const resource = await client[resourceName].get({ id });
+  debug(resource);
 }
 
-async function deleteItem({ what, id }) {
-  debug('Deleting %s "%s"...', what, id);
-  const response = await client[what].delete({ id });
+async function deleteResource({ resourceName, id }) {
+  debug('Deleting %s "%s"...', resourceName, id);
+  const response = await client[resourceName].delete({ id });
+  debug(response);
+}
+
+async function updateResource({ resourceName, resource }) {
+  debug('Updating %s "%s"...', resourceName, resource.id);
+  const response = await client[resourceName].update({ resource });
   debug(response);
 }
 
 (async () => {
   try {
-    // const params = { contact: { code: 78, name: 'Mariano' } };
-    // await createItem({ what: 'contacts', params });
-    await listItems({ what: 'contacts' });
-    // await getItem({ what: 'contacts', id: 'abc' });
-    // await deleteItem({ what: 'contacts', id: 'abc' });
-    // await listItems({ what: 'contacts' });
+    /* const resource = { code: 78, name: 'Mariano' };
+    await createResource({ resourceName: 'contacts', resource });
+    await listResources({ resourceName: 'contacts' }); */
+    /* await getResource({ resourceName: 'contacts', id: 'xxx' });
+    const resource = { id: 'xxx', name: 'Mariano R.', email: 'm@r.org' };
+    await updateResource({ resourceName: 'contacts', resource });
+    await getResource({ resourceName: 'contacts', id: 'xxx' }); */
+    /* await getResource({ resourceName: 'contacts', id: 'xxx' });
+    await deleteResource({ resourceName: 'contacts', id: 'xxx' });
+    await listResources({ resourceName: 'contacts' }); */
 
-    // const params = { salesChannel: { name: 'Online', desc: 'Our worldwide online store' } };
-    // await createItem({ what: 'salesChannels', params });
-    await listItems({ what: 'salesChannels' });
-    // await getItem({ what: 'salesChannels', id: 'cde' });
-    // await deleteItem({ what: 'salesChannels', id: 'cde' });
-    // await listItems({ what: 'salesChannels' });
+    /* const resource = { name: 'The stash', desc: '***' };
+    await createResource({ resourceName: 'saleschannels', resource });
+    await listResources({ resourceName: 'saleschannels' }); */
+    /* await getResource({ resourceName: 'saleschannels', id: 'yyy' });
+    const resource = { id: 'yyy', name: 'Main stash' };
+    await updateResource({ resourceName: 'saleschannels', resource });
+    await getResource({ resourceName: 'saleschannels', id: 'yyy' }); */
+    /* await getResource({ resourceName: 'saleschannels', id: 'yyy' });
+    await deleteResource({ resourceName: 'saleschannels', id: 'yyy' });
+    await listResources({ resourceName: 'saleschannels' }); */
 
     // await createInvoice();
-    await listInvoices();
+    // await listInvoices();
     // await downloadInvoice('efg');
     // await deleteInvoice('efg');
     // await listInvoices();

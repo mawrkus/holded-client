@@ -6,13 +6,20 @@ const debug = require('debug')('holded:client:api');
  */
 module.exports = class GenericApi {
   /**
+   * @param {string} resourceName
    * @param {HttpClient} An HTTP client for the Holded API
-   * @param {string} resource
    */
-  constructor({ httpClient, resource }) {
+  constructor({ resourceName, httpClient }) {
+    this._resourceName = resourceName;
     this._httpClient = httpClient;
-    this._resourceName = resource;
-    debug('Holded %s API created', this._resourceName);
+    debug('Holded "%s" API created', this._resourceName);
+  }
+
+  /**
+   * @return {string}
+   */
+  get resourceName() {
+    return this._resourceName;
   }
 
   /**
@@ -28,14 +35,14 @@ module.exports = class GenericApi {
   }
 
   /**
-   * @param {Object} resourceData
+   * @param {Object} resource
    * @return {Promise}
    */
-  async create({ resourceData }) {
+  async create({ resource }) {
     const { data } = await this._httpClient.request({
       method: 'post',
       url: `/${this._resourceName}`,
-      data: resourceData,
+      data: resource,
     });
 
     return data;
@@ -73,14 +80,14 @@ module.exports = class GenericApi {
   }
 
   /**
-   * @param {Object} resourceData
+   * @param {Object} resource
    * @return {Promise}
    */
-  async update({ resourceData }) {
+  async update({ resource }) {
     const { data } = await this._httpClient.request({
       method: 'put',
-      url: `/${this._resourceName}/${resourceData.id}`,
-      data: resourceData,
+      url: `/${this._resourceName}/${resource.id}`,
+      data: resource,
     });
 
     return data;

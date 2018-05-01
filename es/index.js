@@ -3,8 +3,7 @@ const { version: pkgVersion } = require('../package.json');
 const HttpClient = require('./HttpClient');
 const {
   DocumentsApi,
-  ContactsApi,
-  SalesChannelsApi,
+  GenericApi,
 } = require('./api');
 
 /**
@@ -30,8 +29,21 @@ module.exports = class HoldedClient {
     });
 
     this.documents = new DocumentsApi({ httpClient: this._httpClient });
-    this.contacts = new ContactsApi({ httpClient: this._httpClient });
-    this.salesChannels = new SalesChannelsApi({ httpClient: this._httpClient });
+
+    [
+      'contacts',
+      'saleschannels',
+      'products',
+      'warehouses',
+      'treasury',
+      'expensesaccounts',
+      'payments',
+    ].forEach((resourceName) => {
+      this[resourceName] = new GenericApi({
+        resourceName,
+        httpClient: this._httpClient,
+      });
+    });
 
     debug('Holded API client created');
   }
