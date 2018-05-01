@@ -104,7 +104,7 @@ describe('GenericApi', () => {
     });
   });
 
-  describe('#get()', () => {
+  describe('#get({ id })', () => {
     it('should make a proper HTTP request to Holded API', async () => {
       const { httpClient, api } = createApi();
 
@@ -140,7 +140,7 @@ describe('GenericApi', () => {
     });
   });
 
-  describe('#delete()', () => {
+  describe('#delete({ id })', () => {
     it('should make a proper HTTP request to Holded API', async () => {
       const { httpClient, api } = createApi();
 
@@ -177,16 +177,16 @@ describe('GenericApi', () => {
     });
   });
 
-  describe('#update({ resource })', () => {
+  describe('#update({ id, resource })', () => {
+    const id = 55;
     const resource = {
-      id: 55,
       email: 'mariano@joy.org',
     };
 
     it('should make a proper HTTP request to Holded API', async () => {
       const { httpClient, api } = createApi();
 
-      await api.update({ resource });
+      await api.update({ id, resource });
 
       expect(httpClient.request).toHaveBeenCalledWith({
         method: 'put',
@@ -201,7 +201,7 @@ describe('GenericApi', () => {
 
       httpClient.request.mockResolvedValue({ data: apiResponse });
 
-      const result = await api.update({ resource });
+      const result = await api.update({ id, resource });
 
       expect(result).toEqual(apiResponse);
     });
@@ -213,7 +213,7 @@ describe('GenericApi', () => {
 
         httpClient.request.mockRejectedValue(httpError);
 
-        await expect(api.update({ resource }))
+        await expect(api.update({ id, resource }))
           .rejects
           .toThrow(httpError);
       });

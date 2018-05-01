@@ -26,12 +26,15 @@ module.exports = class GenericApi {
    * @return {Promise}
    */
   async list() {
-    const { data: list } = await this._httpClient.request({
+    debug('Fetching "%s" resources...', this._resourceName);
+
+    const { data: resources } = await this._httpClient.request({
       method: 'get',
       url: `/${this._resourceName}`,
     });
 
-    return list;
+    debug(resources);
+    return resources;
   }
 
   /**
@@ -39,57 +42,66 @@ module.exports = class GenericApi {
    * @return {Promise}
    */
   async create({ resource }) {
+    debug('Creating new "%s" resource...', this._resourceName);
+
     const { data } = await this._httpClient.request({
       method: 'post',
       url: `/${this._resourceName}`,
       data: resource,
     });
 
+    debug(data);
     return data;
   }
 
   /**
-   * Beware that if the resource has not been found, the API does return a 400 (Bad Request)
-   * with the following data: { status: 0, info: 'not found' }
    * @param {string} id
    * @return {Promise}
    */
   async get({ id }) {
-    const { data } = await this._httpClient.request({
+    debug('Fetching "%s" resource id="%s"...', this._resourceName, id);
+
+    const { data: resource } = await this._httpClient.request({
       method: 'get',
       url: `/${this._resourceName}/${id}`,
     });
 
-    return data;
+    debug(resource);
+    return resource;
   }
 
 
   /**
-   * Beware that if the resource has not been found, the API does return a 400 (Bad Request)
-   * with the following data: { status: 0, info: 'not found' }
    * @param {string} id
    * @return {Promise}
    */
   async delete({ id }) {
+    debug('Deleting "%s" resource id="%s"...', this._resourceName, id);
+
     const { data } = await this._httpClient.request({
       method: 'delete',
       url: `/${this._resourceName}/${id}`,
     });
 
+    debug(data);
     return data;
   }
 
   /**
+   * @param {string} id
    * @param {Object} resource
    * @return {Promise}
    */
-  async update({ resource }) {
+  async update({ id, resource }) {
+    debug('Updating "%s" resource id="%s"...', this._resourceName, id);
+
     const { data } = await this._httpClient.request({
       method: 'put',
-      url: `/${this._resourceName}/${resource.id}`,
+      url: `/${this._resourceName}/${id}`,
       data: resource,
     });
 
+    debug(data);
     return data;
   }
 };
