@@ -21,8 +21,7 @@
     "pretest": "npm run lint",
     "test": "jest",
     "tdd": "jest es/ --watch --verbose",
-    "dev:demo": "DEBUG=holded:client:* babel-watch es/demo",
-    "demo": "DEBUG=holded:client:* babel-node es/demo",
+    "demo": "clear && DEBUG=holded:client:* babel-node es/demo",
     "prebuild": "npm run test",
     "build": "rm -rf lib && babel es -d lib --source-maps",
     "prerelease": "npm run build",
@@ -37,8 +36,8 @@
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.6.0",
-    "babel-watch": "^2.0.7",
     "eslint": "^4.7.2",
     "eslint-config-airbnb-base": "^12.0.1",
     "eslint-plugin-import": "^2.7.0",
@@ -53,6 +52,9 @@
     "url": "https://github.com/mawrkus/holded-client/issues"
   },
   "babel": {
+    "plugins": [
+      "transform-object-rest-spread"
+    ],
     "presets": [
       [
         "env",
