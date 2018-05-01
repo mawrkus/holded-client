@@ -4,6 +4,8 @@ A Node.js client for the Holded *invoice* API v1.0, see https://developers.holde
 
 ## Installation
 
+**No yet published**, currently under test with real life use cases. But later:
+
 ```bash
 npm install holded-client
 ```
