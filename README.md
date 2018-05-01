@@ -1,8 +1,10 @@
-# Holded invoice API client
+# 💎 Holded invoice API client
 
-A client for the Holded invoice API v1.0, see https://developers.holded.com/
+A Node.js client for the Holded *invoice* API v1.0, see https://developers.holded.com/
 
 ## Installation
+
+**No yet published**, currently under test with real life use cases. But later:
 
 ```bash
 npm install holded-client
@@ -15,9 +17,9 @@ const HoldedClient = require('holded-client');
 
 const client = new HoldedClient({ apiKey: 'your private api key' });
 
-const { types } = client.documents;
+const { docTypes } = client.documents;
 
-const invoicesList = await client.documents.listByType({ type: types.INVOICE });
+const invoicesList = await client.documents.list({ type: docTypes.INVOICE });
 ```
 
 ## Testing
@@ -36,3 +38,9 @@ npm test
 4. Check the build: `npm run build`
 5. Push to the branch: `git push origin my-new-feature`
 6. Submit a pull request :D
+
+## Roadmap
+
+- Invoice API -> `/numberingseries` support
+- Projects API?
+- CRM API?
