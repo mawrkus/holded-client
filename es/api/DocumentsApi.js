@@ -11,6 +11,9 @@ module.exports = class DocumentsApi {
   constructor({ httpClient }) {
     this._resourceName = 'documents';
     this._httpClient = httpClient;
+
+    this._decorateInvalidTypeMethods(['list', 'create', 'delete', 'update', 'downloadPdf']);
+
     debug('Holded "documents" API created', this.types);
   }
 
@@ -53,30 +56,33 @@ module.exports = class DocumentsApi {
    * @return {Promise}
    */
   async list({ type }) {
-    this._checkForValidType(type);
+    debug('Fetching "%s" documents...', type);
 
-    const { data: invoicesList } = await this._httpClient.request({
+    const { data: documents } = await this._httpClient.request({
       method: 'get',
       url: `/documents/${type}`,
     });
 
-    return invoicesList;
+    debug(documents);
+    return documents;
   }
 
   /**
    * @param  {string} type The type of document to create
+   * @param  {Object} document
    * @return {Promise}
    */
   async create({ type, document }) {
-    this._checkForValidType(type);
+    debug('Creating new "%s" document...', type);
 
-    const { data: newDocument } = await this._httpClient.request({
+    const { data } = await this._httpClient.request({
       method: 'post',
       url: `/documents/${type}`,
       data: document,
     });
 
-    return newDocument;
+    debug(data);
+    return data;
   }
 
   /**
@@ -85,14 +91,34 @@ module.exports = class DocumentsApi {
    * @return {Promise}
    */
   async delete({ type, id }) {
-    this._checkForValidType(type);
+    debug('Deleting "%s" document id="%s"...', type, id);
 
-    const { data: document } = await this._httpClient.request({
+    const { data } = await this._httpClient.request({
       method: 'delete',
       url: `/documents/${type}/${id}`,
     });
 
-    return document;
+    debug(data);
+    return data;
+  }
+
+  /**
+   * @param  {string} type The type of document to update
+   * @param  {string} id
+   * @param  {Object} document
+   * @return {Promise}
+   */
+  async update({ type, id, document }) {
+    debug('Updating "%s" document id="%s"...', type, id);
+
+    const { data } = await this._httpClient.request({
+      method: 'put',
+      url: `/documents/${type}/${id}`,
+      data: document,
+    });
+
+    debug(data);
+    return data;
   }
 
   /**
@@ -101,7 +127,7 @@ module.exports = class DocumentsApi {
    * @return {Promise}
    */
   async downloadPdf({ type, id }) {
-    this._checkForValidType(type);
+    debug('Downloading "%s" document id="%s" to PDF...', type, id);
 
     const { data: base64Pdf } = await this._httpClient.request({
       method: 'get',
@@ -115,11 +141,26 @@ module.exports = class DocumentsApi {
    * @param  {string} type
    * @throws
    */
-  _checkForValidType(type) {
+  _throwIfInvalidType(type) {
     const allowedTypes = Object.values(this.types);
 
     if (!allowedTypes.includes(type)) {
       throw new Error(`Unknown document type "${type}"! Please provide one of the following type: ${allowedTypes.join(', ')}.`);
     }
+  }
+
+  /**
+   * @param {string[]} methodNames
+   */
+  _decorateInvalidTypeMethods(methodNames) {
+    methodNames.forEach((methodName) => {
+      const originalMethod = this[methodName].bind(this);
+
+      this[methodName] = async (params) => {
+        const { type } = params;
+        this._throwIfInvalidType(type);
+        return originalMethod(params);
+      };
+    });
   }
 };

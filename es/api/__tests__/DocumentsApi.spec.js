@@ -16,10 +16,12 @@ function createApi() {
 }
 
 describe('DocumentsApi', () => {
-  it('should be a class with the following methods: list(), create(), downloadPdf(), delete()', () => {
+  it('should be a class with the following methods: list(), create(), delete(), update(), downloadPdf()', () => {
     expect(DocumentsApi).toBeInstanceOf(Function);
     expect(DocumentsApi.prototype.list).toBeInstanceOf(Function);
     expect(DocumentsApi.prototype.create).toBeInstanceOf(Function);
+    expect(DocumentsApi.prototype.delete).toBeInstanceOf(Function);
+    expect(DocumentsApi.prototype.update).toBeInstanceOf(Function);
     expect(DocumentsApi.prototype.downloadPdf).toBeInstanceOf(Function);
   });
 
@@ -147,52 +149,6 @@ describe('DocumentsApi', () => {
     });
   });
 
-  describe('#downloadPdf({ type, id })', () => {
-    it('should make a proper HTTP request to Holded API', async () => {
-      const { httpClient, api } = createApi();
-
-      await api.downloadPdf({ type: api.types.SALESRECEIPT, id: 88 });
-
-      expect(httpClient.request).toHaveBeenCalledWith({
-        method: 'get',
-        url: `/documents/${api.types.SALESRECEIPT}/88/pdf`,
-      });
-    });
-
-    it('should return the data fetched from the API', async () => {
-      const { httpClient, api } = createApi();
-
-      httpClient.request.mockResolvedValue({ data: 'qazwsxedc' });
-
-      const result = await api.downloadPdf({ type: api.types.SALESRECEIPT, id: 88 });
-
-      expect(result).toEqual('qazwsxedc');
-    });
-
-    describe('when there is an error requesting the API', () => {
-      it('should forward (throw) the error', async () => {
-        const { httpClient, api } = createApi();
-        const httpError = new Error('HTTP error!');
-
-        httpClient.request.mockRejectedValue(httpError);
-
-        await expect(api.downloadPdf({ type: api.types.SALESRECEIPT, id: 88 }))
-          .rejects
-          .toThrow(httpError);
-      });
-    });
-
-    describe('when providing an unknown document type', () => {
-      it('should throw an error', async () => {
-        const { api } = createApi();
-
-        await expect(api.downloadPdf({ type: 'swimmingcertificate', id: 88 }))
-          .rejects
-          .toThrow(/Unknown document type "swimmingcertificate"!/);
-      });
-    });
-  });
-
   describe('#delete({ type, id })', () => {
     it('should make a proper HTTP request to Holded API', async () => {
       const { httpClient, api } = createApi();
@@ -236,6 +192,106 @@ describe('DocumentsApi', () => {
         await expect(api.downloadPdf({ type: 'master', id: 88 }))
           .rejects
           .toThrow(/Unknown document type "master"!/);
+      });
+    });
+  });
+
+  describe('#update({ type, id, document })', () => {
+    const id = 88;
+    const document = {
+      desc: 'paper receipt',
+    };
+
+    it('should make a proper HTTP request to Holded API', async () => {
+      const { httpClient, api } = createApi();
+
+      await api.update({ type: api.types.SALESRECEIPT, id, document });
+
+      expect(httpClient.request).toHaveBeenCalledWith({
+        method: 'put',
+        url: `/documents/${api.types.SALESRECEIPT}/88`,
+        data: document,
+      });
+    });
+
+    it('should return the response from the API', async () => {
+      const { httpClient, api } = createApi();
+      const apiResponse = { status: 1, info: 'Deleted ok', id: '88' };
+
+      httpClient.request.mockResolvedValue({ data: apiResponse });
+
+      const result = await api.update({ type: api.types.SALESRECEIPT, id, document });
+
+      expect(result).toEqual(apiResponse);
+    });
+
+    describe('when there is an error requesting the API', () => {
+      it('should forward (throw) the error', async () => {
+        const { httpClient, api } = createApi();
+        const httpError = new Error('HTTP error!');
+
+        httpClient.request.mockRejectedValue(httpError);
+
+        await expect(api.update({ type: api.types.SALESRECEIPT, id, document }))
+          .rejects
+          .toThrow(httpError);
+      });
+    });
+
+    describe('when providing an unknown document type', () => {
+      it('should throw an error', async () => {
+        const { api } = createApi();
+
+        await expect(api.downloadPdf({ type: 'master', id: 88 }))
+          .rejects
+          .toThrow(/Unknown document type "master"!/);
+      });
+    });
+  });
+
+  describe('#downloadPdf({ type, id })', () => {
+    it('should make a proper HTTP request to Holded API', async () => {
+      const { httpClient, api } = createApi();
+
+      await api.downloadPdf({ type: api.types.SALESRECEIPT, id: 88 });
+
+      expect(httpClient.request).toHaveBeenCalledWith({
+        method: 'get',
+        url: `/documents/${api.types.SALESRECEIPT}/88/pdf`,
+      });
+    });
+
+    it('should return the data fetched from the API', async () => {
+      const { httpClient, api } = createApi();
+      const base64Response = Buffer.from('qazwsxedc').toString('base64');
+
+      httpClient.request.mockResolvedValue({ data: base64Response });
+
+      const result = await api.downloadPdf({ type: api.types.SALESRECEIPT, id: 88 });
+
+      expect(result).toEqual(base64Response);
+    });
+
+    describe('when there is an error requesting the API', () => {
+      it('should forward (throw) the error', async () => {
+        const { httpClient, api } = createApi();
+        const httpError = new Error('HTTP error!');
+
+        httpClient.request.mockRejectedValue(httpError);
+
+        await expect(api.downloadPdf({ type: api.types.SALESRECEIPT, id: 88 }))
+          .rejects
+          .toThrow(httpError);
+      });
+    });
+
+    describe('when providing an unknown document type', () => {
+      it('should throw an error', async () => {
+        const { api } = createApi();
+
+        await expect(api.downloadPdf({ type: 'swimmingcertificate', id: 88 }))
+          .rejects
+          .toThrow(/Unknown document type "swimmingcertificate"!/);
       });
     });
   });
