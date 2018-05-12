@@ -135,7 +135,7 @@ function deleteResource({ resourceName, id }) {
     await listDocuments({ type });
     await downloadDocument({ type, id, file: 'antoine.pdf' });
 
-    await updateDocument({ type, id, document: { langauge: 'fr', notes: 'Updated services' } });
+    await updateDocument({ type, id, document: { language: 'fr', notes: 'Updated services' } });
     await downloadDocument({ type, id, file: 'antoine-updated.pdf' });
 
     await deleteDocument({ type, id });
