@@ -86,7 +86,7 @@ function deleteResource({ resourceName, id }) {
     data: { amount: 99, desc: 'For good services' },
   }];
 
-  resources.filter(({ name }) => name === 'payments').forEach(async ({ name: resourceName, data: resource }) => {
+  resources.forEach(async ({ name: resourceName, data: resource }) => {
     try {
       const { id } = await createResource({ resourceName, resource });
       await listResources({ resourceName });
