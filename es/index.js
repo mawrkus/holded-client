@@ -48,7 +48,7 @@ module.exports = class HoldedClient {
     });
 
     const api = new DocumentsApi({ httpClient: this._httpClient });
-    this._decorateNotFoundMethods({ api, methodNames: ['downloadPdf', 'delete', 'update'] });
+    this._decorateNotFoundMethods({ api, methodNames: ['downloadPdf', 'delete', 'update', 'get', 'pay'] });
     this.documents = api;
 
     debug('Holded API client created');
