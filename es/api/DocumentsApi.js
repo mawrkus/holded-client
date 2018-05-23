@@ -159,13 +159,13 @@ module.exports = class DocumentsApi {
    * @param  {string} id
    * @return {Promise}
    */
-  async pay({ type, id, resource }) {
+  async pay({ type, id, payment }) {
     debug('Paying "%s" document id="%s"...', type, id);
 
     const { data } = await this._httpClient.request({
       method: 'post',
       url: `/documents/${type}/${id}/pay`,
-      data: resource,
+      data: payment,
     });
 
     debug(data);

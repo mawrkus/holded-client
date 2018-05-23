@@ -15,12 +15,20 @@ function listDocuments({ type }) {
   return client.documents.list({ type });
 }
 
+function getDocument({ type, id }) {
+  return client.documents.get({ type, id });
+}
+
 function createDocument({ type, document }) {
   return client.documents.create({ type, document });
 }
 
 function updateDocument({ type, id, document }) {
   return client.documents.update({ type, id, document });
+}
+
+function payDocument({ type, id, payment }) {
+  return client.documents.pay({ type, id, payment });
 }
 
 async function downloadDocument({ type, id, file }) {
@@ -114,6 +122,14 @@ function deleteResource({ resourceName, id }) {
 
   try {
     const type = docTypes.SALESRECEIPT;
+    const items = [{
+      name: '6h chillax coworking Gerona',
+      desc: 'Meeting room reservation',
+      units: 1,
+      subtotal: 300,
+      tax: 20, // %
+      sku: 'co-gerona-bcn',
+    }];
     const document = {
       salesChannelId: '5ae61a9b2e1d933c6806be13',
       contactCode: 42,
@@ -121,22 +137,22 @@ function deleteResource({ resourceName, id }) {
       date: Date.now() / 1000, // PHP on the backend baby
       notes: 'Services provided to Antoine',
       language: 'en',
-      products: [{
-        name: '6h chillax coworking Gerona',
-        desc: 'Meeting room reservation',
-        units: 1,
-        subtotal: 300,
-        tax: 20, // %
-        sku: 'co-gerona-bcn',
-      }],
+      items,
+    };
+    const payment = {
+      date: Date.now() / 1000,
+      amount: 360,
     };
 
     const { id } = await createDocument({ type, document });
     await listDocuments({ type });
+    await getDocument({ type, id });
     await downloadDocument({ type, id, file: 'antoine.pdf' });
 
-    await updateDocument({ type, id, document: { language: 'fr', notes: 'Updated services' } });
+    await updateDocument({ type, id, document: { language: 'fr', notes: 'Updated services', items } });
     await downloadDocument({ type, id, file: 'antoine-updated.pdf' });
+
+    await payDocument({ type, id, payment });
 
     await deleteDocument({ type, id });
     await listDocuments({ type });
