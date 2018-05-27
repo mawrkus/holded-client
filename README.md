@@ -1,5 +1,8 @@
 # 💎 Holded invoice API client
 
+[![npm](https://img.shields.io/npm/l/holded-client.svg)](https://www.npmjs.org/package/holded-client) [![npm](https://img.shields.io/npm/v/holded-client.svg)](https://www.npmjs.org/package/holded-client)
+![Node version](https://img.shields.io/node/v/holded-client.svg?style=flat-square)
+
 A Node.js client for the Holded *invoice* API v1.0, see https://developers.holded.com/
 
 ## Installation

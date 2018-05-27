@@ -10,6 +10,9 @@
   ],
   "license": "MIT",
   "main": "index.js",
+  "engines": {
+    "node": ">= 8.9"
+  },
   "homepage": "https://github.com/mawrkus/holded-client",
   "files": [
     "es",
