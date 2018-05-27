@@ -46,10 +46,12 @@ Each api exposes the following methods:
 Except for the documents API:
 
 - `list({ type })`
+- `get({ type, id })`
 - `create({ type, document })`
 - `downloadPdf({ type, id })`
 - `update({ type, id, document })`
 - `delete({ type, id })`
+- `pay({ type, id, payment })`
 
 ## Testing
 

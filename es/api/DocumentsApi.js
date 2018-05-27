@@ -12,7 +12,7 @@ module.exports = class DocumentsApi {
     this._resourceName = 'documents';
     this._httpClient = httpClient;
 
-    this._decorateInvalidTypeMethods(['list', 'create', 'delete', 'update', 'downloadPdf']);
+    this._decorateInvalidTypeMethods(['list', 'create', 'get', 'delete', 'update', 'downloadPdf', 'pay']);
 
     debug('Holded "documents" API created', this.types);
   }
@@ -86,6 +86,23 @@ module.exports = class DocumentsApi {
   }
 
   /**
+   * @param  {string} type The type of document to get
+   * @param  {string} id
+   * @return {Promise}
+   */
+  async get({ type, id }) {
+    debug('Getting "%s" document id="%s"...', type, id);
+
+    const { data } = await this._httpClient.request({
+      method: 'get',
+      url: `/documents/${type}/${id}`,
+    });
+
+    debug(data);
+    return data;
+  }
+
+  /**
    * @param  {string} type The type of document to delete
    * @param  {string} id
    * @return {Promise}
@@ -135,6 +152,24 @@ module.exports = class DocumentsApi {
     });
 
     return base64Pdf;
+  }
+
+  /**
+   * @param  {string} type The type of document to pay
+   * @param  {string} id
+   * @return {Promise}
+   */
+  async pay({ type, id, payment }) {
+    debug('Paying "%s" document id="%s"...', type, id);
+
+    const { data } = await this._httpClient.request({
+      method: 'post',
+      url: `/documents/${type}/${id}/pay`,
+      data: payment,
+    });
+
+    debug(data);
+    return data;
   }
 
   /**
